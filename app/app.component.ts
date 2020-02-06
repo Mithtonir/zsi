@@ -1,5 +1,6 @@
 import {
-  Component
+  Component,
+  OnInit
 } from '@angular/core';
 import {
   MatSliderChange
@@ -8,7 +9,7 @@ import {
   selector: 'my-app',
   templateUrl: 'app/app.component.html'
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   value: number = 1;
   sliderValue: number;
 
@@ -16,17 +17,17 @@ export class AppComponent {
   interval: any;
   //values for fuzzy
 
-  avgValue = new Array();
+  irrigation = new Array();
 
   //end of fuzzy values
   iArr = new Array();
+  ngOnInit() {}
   startTimer() {
     this.timeLeft = this.sliderValue;
     this.interval = setInterval(() => {
       if (this.timeLeft > 1) {
         this.timeLeft--;
         this.value++;
-
         this.termAvg();
       }
     }, 1000)
@@ -39,24 +40,36 @@ export class AppComponent {
     clearInterval(this.interval);
   }
 
+  termLow() {
+    //1-45; 30-45
+    for (var i = 1; i <= 45; i++) {
+      var x = i;
+      if (x >= 30) {
+        this.irrigation.push(1, 1);
+      } else if (x > 30 && x <= 45) {
+        var avg = (x - 30) / (45 - 30);
+        this.irrigation.push(1, avg);
+      } else {
+        this.irrigation.push(1, 0);
+      }
+    }
+  }
   termAvg() {
     //25 do 75, abv = 1 {40 do 60 }
     var i = 1;
     for (i; i <= 51; i++) {
       var x = 25 + i;
       if (x >= 25 && x <= 75) {
-        var toPush = (x - 40) / (75 - 25);
-        this.avgValue.push(2, toPush);
-        this.iArr.push(x);
+        var avg = (x - 40) / (75 - 25);
+        this.irrigation.push(2, avg);
       } else if (x >= 40 && x <= 60) {
-        this.avgValue.push(2, 1);
+        this.irrigation.push(2, 1);
+      } else if (x >= 60 && x <= 75) {
+        var avg = (75 - x) / (75 - 60);
+        this.irrigation.push(2, avg);
       } else {
-        this.avgValue.push(2, 1);
+        this.irrigation.push(2, 0);
       }
-    }
-    if(this.timeLeft<1){
-    console.log('this.iArr', this.iArr);
-    console.log('this.avgValue', this.avgValue);
     }
   }
 
