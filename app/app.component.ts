@@ -47,8 +47,8 @@ export class AppComponent implements OnInit {
       if (x >= 30) {
         this.irrigation.push(1, 1);
       } else if (x > 30 && x <= 45) {
-        var avg = (x - 30) / (45 - 30);
-        this.irrigation.push(1, avg);
+        var low = (x - 30) / (45 - 30);
+        this.irrigation.push(1, low);
       } else {
         this.irrigation.push(1, 0);
       }
@@ -73,4 +73,20 @@ export class AppComponent implements OnInit {
     }
   }
 
+  termHigh() {
+    //60- 101; 70-80; 
+    for(var i=1; i<41; i++){
+      var x = 60 + i;
+      if(x>=60 && x<101){
+        var high = (x-70)/(80-70);
+        this.irrigation.push(3, high);
+      }
+      else if (x>=80 && x< 101){
+        this.irrigation.push(3, 1)
+      }
+      else {
+        this.irrigation.push(3,0);
+      }
+    }
+  }
 }
