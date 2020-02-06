@@ -20,15 +20,15 @@ export class AppComponent implements OnInit {
   irrigation = new Array();
 
   //end of fuzzy values
-  iArr = new Array();
-  ngOnInit() {}
+
+  ngOnInit() {        this.termLow();
+  }
   startTimer() {
     this.timeLeft = this.sliderValue;
     this.interval = setInterval(() => {
       if (this.timeLeft > 1) {
         this.timeLeft--;
         this.value++;
-        this.termAvg();
       }
     }, 1000)
   }
@@ -38,43 +38,49 @@ export class AppComponent implements OnInit {
 
   pauseTimer() {
     clearInterval(this.interval);
+    
   }
-
-  termLow() {
-    //1-45; 30-45
-    for (var i = 1; i <= 45; i++) {
-      var x = i;
-      if (x >= 30) {
-        this.irrigation.push(1, 1);
-      } else if (x > 30 && x <= 45) {
-        var low = (x - 30) / (45 - 30);
-        this.irrigation.push(1, low);
-      } else {
-        this.irrigation.push(1, 0);
-      }
+termLow() {
+  //1-45; 30-45
+  for (var i = 1; i <= 45; i++) {
+    var x = i;
+    var low: number;
+    if (x > 30 && x <= 45) {
+      low = (x - 30) / (45 - 30);
+    }  else if (x <= 30) {
+      low = 1;
     }
+     else if (x>45){
+      low = 0;
+    }
+    if(i === 45) break;
+    this.irrigation.push(1, low);
   }
+  
+  console.log('this.irrigation', this.irrigation)
+  
+}
   termAvg() {
     //25 do 75, abv = 1 {40 do 60 }
     var i = 1;
     for (i; i <= 51; i++) {
       var x = 25 + i;
+      var avg: number;
       if (x >= 25 && x <= 75) {
-        var avg = (x - 40) / (75 - 25);
-        this.irrigation.push(2, avg);
-      } else if (x >= 40 && x <= 60) {
-        this.irrigation.push(2, 1);
+        avg = (x - 40) / (75 - 25);      
+      } 
+      else if (x >= 40 && x <= 60) {
+        avg = 1;
       } else if (x >= 60 && x <= 75) {
-        var avg = (75 - x) / (75 - 60);
-        this.irrigation.push(2, avg);
-      } else {
-        this.irrigation.push(2, 0);
-      }
+        avg = 0
+              }
     }
+    this.irrigation.push(2, avg);
+    console.log('this.irrigation', this.irrigation)
   }
 
   termHigh() {
-    //60- 101; 70-80; 
+    //60- 101; 70-80;
     for(var i=1; i<41; i++){
       var x = 60 + i;
       if(x>=60 && x<101){
