@@ -11,10 +11,11 @@
     <link rel=“stylesheet” type=“text/css” href=“style.css” />
 </head>
 
-<body>
+<body> irr1: {{irrigation | json}} <br> <code>irr2: {{irrigation2 | json}}</code> <br>irr3: {{irrigation3 | json}}
     <mat-card>
         <mat-card-title>Nawadnianie szklarni</mat-card-title>
         <mat-card-content>
+            <pre style="width: 600px"> {{test }}</pre>
             <mat-card-subtitle>Wybierz {{sliderValue}}% nawodnienia</mat-card-subtitle> 
             <mat-slider (input)="onInputChange($event)" color="primary" thumbLabel  min="1" max="100"></mat-slider>
             <mat-card-subtitle>Aktualne nawodnienie: {{value}}%</mat-card-subtitle>
@@ -23,10 +24,15 @@
             <br><br>
             <mat-card-actions>
                 <button mat-raised-button color="primary" (click)='startTimer()'>Rozpocznij nawadnianie</button>
+            
                 <button mat-raised-button color="accent" (click)='pauseTimer()'>Pauza</button>
+                <button mat-raised-button color="warn" (click)='jeb()'>kurwa</button>
+
             </mat-card-actions>
+
             <br>
         </mat-card-content>
+
     </mat-card>
 </body>
 
