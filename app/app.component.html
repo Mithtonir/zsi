@@ -11,18 +11,19 @@
     <link rel=“stylesheet” type=“text/css” href=“style.css” />
 </head>
 
-<body> irr1: {{humidity | json}} <br> <code>irr2: {{humidity2 | json}}</code> <br>irr3: {{humidity3 | json}} <br><br> entryvalue{{ irrFzfctd2 | json}}
-    <br> <br> 
-    irr1 fuzzyficated: {{humidity[irrFzfctd]}}<br> 
-    irr2 fuzzyficated: {{humidity2[irrFzfctd2]}}<br> 
-    irr2 fuzzyficated: {{humidity3[irrFzfctd3]}}<br> 
+<body> 
+    <!-- irr1: {{humidity | json}} <br> <code>irr2: {{humidity2 | json}}</code> <br>irr3: {{humidity3 | json}} <br><br> entryvalue{{ irrFzfctd2 | json}}
+    <br> <br>  -->
+    humidity1 fuzzyficated: {{humidity[humidityFzfctd]}}<br> 
+    humidity2 fuzzyficated: {{humidity2[humidityFzfctd2]}}<br> 
+    humidity2 fuzzyficated: {{humidity3[humidityFzfctd3]}}<br> 
 
 
     <mat-card>
         <mat-card-title>Nawadnianie szklarni</mat-card-title>
         <mat-card-content>
             <pre style="width: 600px"> {{test }}</pre>
-            <mat-card-subtitle>Nawodnienie: {{sliderValue}}%</mat-card-subtitle> 
+            <mat-card-subtitle>Wilgotność gleby: {{sliderValue}}%</mat-card-subtitle> 
             <mat-slider (input)="onInputChange($event)" color="primary" thumbLabel  min="1" max="100"></mat-slider> 
             <mat-card-subtitle>Aktualne nawodnienie: {{value}}%</mat-card-subtitle>
             <mat-divider></mat-divider>
@@ -32,7 +33,8 @@
                 <button mat-raised-button color="primary" (click)='startTimer()'>Rozpocznij nawadnianie</button>
             
                 <button mat-raised-button color="accent" (click)='pauseTimer()'>Pauza</button>
-                <button mat-raised-button color="warn" (click)='initHumidityTerms()'>InitTerms</button>
+                <button mat-raised-button color="warn" (click)='initHumidityTerms()'>humidity</button>
+                <button mat-raised-button color="warn" (click)='initIrrogationTerms()'>Init irrogaton Terms</button>
 
             </mat-card-actions>
 
@@ -43,3 +45,4 @@
 </body>
 
 </html>
+<!-- https://www.agrofakt.pl/nawadnianie-pomidorow-zrodlo-zdrowia/ -->

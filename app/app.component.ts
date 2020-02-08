@@ -5,6 +5,7 @@ import {
 import {
   MatSliderChange
 } from '@angular/material';
+
 @Component({
   selector: 'my-app',
   templateUrl: 'app/app.component.html'
@@ -15,19 +16,24 @@ export class AppComponent implements OnInit {
 
   timeLeft: number;
   interval: any;
-  //values for entry humidity
+  //#region values for entry soil humidity
   humidity = new Array();
   humidity2 = new Array();
   humidity3 = new Array();
   humidityFzfctd: number;
   humidityFzfctd2: number;
   humidityFzfctd3: number;
-  //end of entry humidity
+  //#endregion end of entry humidity
   //========================================================
-  //values for irrogation
-
-
-  //end of values irrogation
+  //#region values for irrogation
+  irrigation = new Array();
+  irrigation2 = new Array();
+  irrigation3 = new Array();
+  irrigationFzfctd: number;
+  irrigationFzfctd2: number;
+  irrigationFzfctd3: number;
+  irrLvl: number;
+  //#endregion end of values irrogation
 
   test = new Array();
   ngOnInit() {
@@ -46,13 +52,85 @@ export class AppComponent implements OnInit {
     this.sliderValue = event.value;
   }
 
-
   pauseTimer() {
     clearInterval(this.interval);
     this.test = this.humidity;
     console.log('this.test', this.test)
 
   }
+  inference(){
+    if(this.humidityFzfctd){
+var y = _.findIndex(y, 1);
+
+    }
+  }
+
+//irrogation
+//#region
+initIrrogationTerms(){
+  this.irrogationTermLow();
+  this.irrogationTermAvg();
+  this.irrogationTermHigh();
+  console.log('irrigation', this.irrigation3);
+}
+irrogationTermLow(){
+    //1-45; 30-45
+    var a = 45;
+    var x2 = 35;
+    var b = 48;
+    var low: number;
+    for (var i = 1; i <= 45; i++) {
+      var x = i;
+      if (x < 30) {
+        low = 1;
+      }
+      if (x2 <= x && x <= b) {
+        low = (b - x) / (b - x2);
+      }
+      if (x > 45) {
+        low = 0;
+      }
+      this.irrigation.push(low);
+    }
+}
+irrogationTermAvg(){
+  
+  var a = 45;
+  var b = 60;
+  var x0 = 53;
+  var avg: number;
+  for(var i = 1; i<=15; i++){
+   var x = (a-1) + i; 
+  if(a<= x && x<=x0){
+    avg = (x-a)/(x0-a);
+  }
+  if(x0<= x && x<= b){
+    avg = (b-x)/(b-x0)
+  }
+  this.irrigation2.push(avg);
+  }
+}
+irrogationTermHigh(){
+  var a = 60;
+  var x1 = 80;
+  var x2 = 100;
+  //60- 101; 70-80;
+  for (var i = 1; i < 41; i++) {
+    var x = a + i;
+    var high: number;
+    if (a <= x && x <= x1) {
+      high = (x - a) / (x1 - a);
+    }
+    if (x1 <= x && x <= x2) {
+      high = 1;
+    } 
+    this.irrigation3.push(high);
+  
+  }
+}
+//#endregion
+
+//#region Humidity
   initHumidityTerms() {
     this.termHumidityLow();
     this.termHumidityAvg();
@@ -128,4 +206,5 @@ export class AppComponent implements OnInit {
       }
     }
   }
+  //#endregion
 }
