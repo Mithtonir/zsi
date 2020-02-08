@@ -5,7 +5,7 @@ import {
 import {
   MatSliderChange
 } from '@angular/material';
-
+import * as _ from "lodash";
 @Component({
   selector: 'my-app',
   templateUrl: 'app/app.component.html'
@@ -16,6 +16,7 @@ export class AppComponent implements OnInit {
 
   timeLeft: number;
   interval: any;
+  isStartButtonDisabled = false;
   //#region values for entry soil humidity
   humidity = new Array();
   humidity2 = new Array();
@@ -29,17 +30,19 @@ export class AppComponent implements OnInit {
   irrigation = new Array();
   irrigation2 = new Array();
   irrigation3 = new Array();
-  irrigationFzfctd: number;
-  irrigationFzfctd2: number;
-  irrigationFzfctd3: number;
-  irrLvl: number;
+  irrigationHigh: number;
+  irrigationAvg: number;
+  irrigationLow: number;
+  irrLvl: any[][];
   //#endregion end of values irrogation
 
   test = new Array();
   ngOnInit() {
     this.sliderValue = 1;
+
   }
   startTimer() {
+    this.isStartButtonDisabled = true;
     this.timeLeft = this.sliderValue;
     this.interval = setInterval(() => {
       if (this.timeLeft > 1) {
@@ -50,30 +53,47 @@ export class AppComponent implements OnInit {
   }
   onInputChange(event: MatSliderChange) {
     this.sliderValue = event.value;
+    this.initHumidityTerms();
   }
 
   pauseTimer() {
+    this.isStartButtonDisabled = false;
     clearInterval(this.interval);
     this.test = this.humidity;
     console.log('this.test', this.test)
 
   }
-  inference(){
-    if(this.humidityFzfctd){
-var y = _.findIndex(y, 1);
-
+  rules() {
+    if (this.humidity[this.humidityFzfctd]) {
+      if (this.sliderValue >= 45) this.irrigationHigh = 0;
+      else if (this.humidity[this.humidityFzfctd] > 0) {
+        this.irrigationHigh = this.humidity[this.humidityFzfctd];
+      }
     }
+    if (this.humidity[this.humidityFzfctd2]) {
+      if (this.sliderValue >= 45) this.irrigationAvg = 0;
+      else if (this.humidity[this.humidityFzfctd2] > 0) {
+        this.irrigationAvg = this.humidity[this.humidityFzfctd2];
+      }
+    }
+    if (this.humidity[this.humidityFzfctd3]) {
+      if (this.sliderValue >= 45) this.irrigationLow = 0;
+      else if (this.humidity[this.humidityFzfctd3] > 0) {
+        this.irrigationLow = this.humidity[this.humidityFzfctd3];
+      }
+    }
+    // console.log('this.humidity[this.humidityFzfctd];', this.humidity[this.humidityFzfctd])
   }
 
-//irrogation
-//#region
-initIrrogationTerms(){
-  this.irrogationTermLow();
-  this.irrogationTermAvg();
-  this.irrogationTermHigh();
-  console.log('irrigation', this.irrigation3);
-}
-irrogationTermLow(){
+  //irrogation
+  //#region
+  initIrrogationTerms() {
+    this.irrogationTermLow();
+    this.irrogationTermAvg();
+    this.irrogationTermHigh();
+    console.log('irrigation', this.irrigation3);
+  }
+  irrogationTermLow() {
     //1-45; 30-45
     var a = 45;
     var x2 = 35;
@@ -92,71 +112,74 @@ irrogationTermLow(){
       }
       this.irrigation.push(low);
     }
-}
-irrogationTermAvg(){
-  
-  var a = 45;
-  var b = 60;
-  var x0 = 53;
-  var avg: number;
-  for(var i = 1; i<=15; i++){
-   var x = (a-1) + i; 
-  if(a<= x && x<=x0){
-    avg = (x-a)/(x0-a);
   }
-  if(x0<= x && x<= b){
-    avg = (b-x)/(b-x0)
-  }
-  this.irrigation2.push(avg);
-  }
-}
-irrogationTermHigh(){
-  var a = 60;
-  var x1 = 80;
-  var x2 = 100;
-  //60- 101; 70-80;
-  for (var i = 1; i < 41; i++) {
-    var x = a + i;
-    var high: number;
-    if (a <= x && x <= x1) {
-      high = (x - a) / (x1 - a);
-    }
-    if (x1 <= x && x <= x2) {
-      high = 1;
-    } 
-    this.irrigation3.push(high);
-  
-  }
-}
-//#endregion
+  irrogationTermAvg() {
 
-//#region Humidity
+    var a = 45;
+    var b = 60;
+    var x0 = 53;
+    var avg: number;
+    for (var i = 1; i <= 15; i++) {
+      var x = (a - 1) + i;
+      if (a <= x && x <= x0) {
+        avg = (x - a) / (x0 - a);
+      }
+      if (x0 <= x && x <= b) {
+        avg = (b - x) / (b - x0)
+      }
+      this.irrigation2.push(avg);
+    }
+  }
+  irrogationTermHigh() {
+    var a = 60;
+    var x1 = 80;
+    var x2 = 100;
+    //60- 101; 70-80;
+    for (var i = 1; i < 41; i++) {
+      var x = a + i;
+      var high: number;
+      if (a <= x && x <= x1) {
+        high = (x - a) / (x1 - a);
+      }
+      if (x1 <= x && x <= x2) {
+        high = 1;
+      }
+      this.irrigation3.push(high);
+
+    }
+  }
+  //#endregion
+
+  //#region Humidity
   initHumidityTerms() {
     this.termHumidityLow();
     this.termHumidityAvg();
     this.termHumidityHigh();
+    this.rules();
   }
   termHumidityLow() {
-    //1-45; 30-45
+    //1-45; 30-45 
     for (var i = 1; i <= 45; i++) {
+
       var x = i;
       var x2 = 30;
       var b = 45;
       var low: number;
-      if (x < 30) {
+      if (x <= 30 && x >= 1) {
         low = 1;
       }
       if (x >= 30 && x <= 45) {
         low = (b - x) / (b - x2);
       }
-      if (x > 45) {
-        low = 0;
-      }
       this.humidity.push(low);
       if (this.sliderValue === x) {
         this.humidityFzfctd = x;
       }
+      if (x === 1) {
+        this.humidityFzfctd = 0
+      }
     }
+
   }
   termHumidityAvg() {
     //25 do 75, abv = 1 {40 do 60 }
@@ -199,7 +222,7 @@ irrogationTermHigh(){
       }
       if (x1 <= x && x <= x2) {
         high = 1;
-      } 
+      }
       this.humidity3.push(high);
       if (this.sliderValue === x) {
         this.humidityFzfctd3 = i;

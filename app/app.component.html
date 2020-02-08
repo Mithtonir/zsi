@@ -30,7 +30,7 @@
             <mat-progress-bar value="{{value}}"></mat-progress-bar>
             <br><br>
             <mat-card-actions>
-                <button mat-raised-button color="primary" (click)='startTimer()'>Rozpocznij nawadnianie</button>
+                <button mat-raised-button color="primary" [disabled]="isStartButtonDisabled" (click)='startTimer()'>Rozpocznij nawadnianie</button>
             
                 <button mat-raised-button color="accent" (click)='pauseTimer()'>Pauza</button>
                 <button mat-raised-button color="warn" (click)='initHumidityTerms()'>humidity</button>
