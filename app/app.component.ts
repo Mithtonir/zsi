@@ -3,7 +3,8 @@ import {
   OnInit
 } from '@angular/core';
 import {
-  MatSliderChange
+  MatSliderChange,
+  MatSnackBar
 } from '@angular/material';
 
 @Component({
@@ -12,12 +13,17 @@ import {
 })
 export class AppComponent implements OnInit {
   value: number = 1;
-  sliderValue: number; 
+  sliderValue: number;
   interval: any;
   isStartButtonDisabled = false;
+  isSliderDisabled = false;
   isMatSubtitleVisible = false;
+  dryingInfoVisible = false;
   defuzzyficatedValue: number;
   timeLeft: number;
+  //--
+  drying3 = new Array();
+  dryingHigh: number;
   //#region values for entry soil humidity
   humidity = new Array();
   humidity2 = new Array();
@@ -37,33 +43,48 @@ export class AppComponent implements OnInit {
   highX: number;
   avgX: number;
   lowX: number;
-  irrLvl: any[][];
   //#endregion end of values irrogation
 
   test = new Array();
   ngOnInit() {
+    this.drying();
     this.sliderValue = 1;
     this.initIrrogationTerms();
+  }
+  constructor(private _snackBar: MatSnackBar) {}
+  openSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action, {
+      duration: 2000,
+    });
+  }
+  click() {
+    this.isSliderDisabled = true;
   }
   startTimer() {
     this.value = this.sliderValue;
     this.isStartButtonDisabled = true;
+    this.isSliderDisabled = true;
     this.interval = setInterval(() => {
       if (this.timeLeft > 1) {
-
         this.timeLeft--;
         this.value++;
+      }
+      if (this.value > 75) {
+        this.openSnackBar("Rozpoczęto oszuszanie, ponieważ przekroczono wilgotność gleby", "ok");
+        this.value--;
       }
     }, 100)
 
   }
+
   onInputChange(event: MatSliderChange) {
     this.sliderValue = event.value;
     this.isMatSubtitleVisible = true;
     this.initHumidityTerms();
     this.rules();
     this.findIrrigationLvl();
-    this.defuzzyfication();
+    this.centerOfGravity();
+    this.ruleDrying();
   }
 
   pauseTimer() {
@@ -75,52 +96,81 @@ export class AppComponent implements OnInit {
     clearInterval(this.interval);
 
   }
-  defuzzyfication() {
+  centerOfGravity() {
 
     if (this.highX === undefined) this.highX = 0;
     if (this.avgX === undefined) this.avgX = 0;
     if (this.lowX === undefined) this.lowX = 0;
 
     this.defuzzyficatedValue = ((this.irrigationHigh * this.highX + this.irrigationAvg * this.avgX + this.irrigationLow * this.lowX) / 3) / (this.irrigationAvg + this.irrigationHigh + this.irrigationLow);
+    if (isNaN(this.defuzzyficatedValue)) {
+      this.defuzzyficatedValue = 0;
+    }
+    console.log('this.defuzzyficatedValue', this.defuzzyficatedValue);
     this.timeLeft = Math.round(this.defuzzyficatedValue);
+
   }
+
   findIrrigationLvl() {
     for (var i = 0; i <= 135; i++) {
-      if (this.humidity[this.humidityFzfctd] === this.irrigation3[i] && i <= 122) {
+      if (this.humidity[this.humidityFzfctd] === this.irrigation3[i]) {
         this.irrigationHigh = this.humidity[this.humidityFzfctd];
         this.highX = i;
       }
-      if (this.humidity2[this.humidityFzfctd2] === this.irrigation2[i] && i <= 44) {
+      if (this.humidity2[this.humidityFzfctd2] === this.irrigation2[i]) {
         this.irrigationAvg = this.humidity2[this.humidityFzfctd2];
         this.avgX = i;
+
       }
-      if (this.humidity3[this.humidityFzfctd3] === this.irrigation[i] && i <= 134) {
+      if (this.humidity3[this.humidityFzfctd3] === this.irrigation[i]) {
         this.irrigationLow = this.humidity3[this.humidityFzfctd3];
         this.lowX = i;
       }
     }
   }
+  ruleDrying() {
+    if (this.irrigationLow === 0) {
+      this.dryingHigh = this.drying3[this.sliderValue];
+    }
+  }
   rules() {
     if (this.humidity[this.humidityFzfctd]) {
-      if (this.sliderValue >= 45) this.irrigationHigh = 0;
-      else if (this.humidity[this.humidityFzfctd] > 0) {
+      if (this.humidity[this.humidityFzfctd] > 0) {
         this.irrigationHigh = this.humidity[this.humidityFzfctd];
       }
     }
     if (this.humidity[this.humidityFzfctd2]) {
-      if ((this.sliderValue >= 35) && (this.sliderValue <= 75)) this.irrigationAvg = 0;
-      else if (this.humidity[this.humidityFzfctd2] > 0) {
+      if (this.humidity[this.humidityFzfctd2] > 0) {
         this.irrigationAvg = this.humidity[this.humidityFzfctd2];
       }
     }
     if (this.humidity[this.humidityFzfctd3]) {
-      if (this.sliderValue >= 76) this.irrigationLow = 0;
-      else if (this.humidity[this.humidityFzfctd3] > 0) {
+      if (this.humidity[this.humidityFzfctd3] > 0) {
         this.irrigationLow = this.humidity[this.humidityFzfctd3];
       }
     }
-  }
 
+  }
+  drying() {
+    var aH = 60;
+    var x1H = 80;
+    var x2H = 100;
+    var high: number;
+    for (var i = 1; i <= x2H; i++) {
+      var x = i
+      if (aH <= x && x <= x1H) {
+        high = (x - aH) / (x1H - aH);
+      }
+      if (x1H <= x && x <= x2H) {
+        high = 1;
+      }
+      if (x < 60) {
+        high = 0;
+      }
+      this.drying3.push(high);
+
+    }
+  }
   //irrogation
   //#region
   initIrrogationTerms() {
@@ -129,23 +179,7 @@ export class AppComponent implements OnInit {
     this.irrogationTermHigh();
   }
   irrogationTermLow() {
-    var a = 45 * 3;
-    var x2 = 35 * 3;
-    var b = 48 * 3;
-    var low: number;
-    for (var i = 1; i <= 45 * 3; i++) {
-      var x = i;
-      if (x < 30) {
-        low = 1;
-      }
-      if (x2 <= x && x <= b) {
-        low = (b - x) / (b - x2);
-      }
-      if (x > 45) {
-        low = 0;
-      }
-      this.irrigation.push(low);
-    }
+    this.irrigation.push(0);
   }
   irrogationTermAvg() {
 
@@ -186,7 +220,6 @@ export class AppComponent implements OnInit {
   //#region Humidity
   initHumidityTerms() {
     this.calculateHumidity();
-
     this.rules();
   }
   calculateHumidity() {

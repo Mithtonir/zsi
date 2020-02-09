@@ -8,6 +8,7 @@
     <title>Szklarnia</title>
     <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"> -->
+        
     <link rel=“stylesheet” type=“text/css” href=“style.css” />
 </head>
 
@@ -18,13 +19,13 @@
                 <mat-card-title>Nawadnianie</mat-card-title>
                 <mat-card-content>
                     <div *ngIf="isMatSubtitleVisible">
-                        <mat-card-subtitle>Wymagane nawodnienie dodatkowe: {{defuzzyficatedValue || 0}}
+                        <mat-card-subtitle>Wymagane nawodnienie dodatkowe: +{{defuzzyficatedValue - 1}}%
                         </mat-card-subtitle>
                     </div>
-                    <mat-card-subtitle>Wilgotność gleby: {{sliderValue}}%</mat-card-subtitle>
-                    <mat-slider [disabled]="isStartButtonDisabled" (input)="onInputChange($event)" color="primary"
+                    <mat-card-subtitle>Wilgotność gleby: {{sliderValue -1}}%</mat-card-subtitle>
+                    <mat-slider style="width: 300px;" [disabled]="isSliderDisabled" (input)="onInputChange($event)" (click)="click()" color="primary"
                         thumbLabel min="1" max="100"></mat-slider>
-                    <mat-card-subtitle>Aktualne nawodnienie: {{value}}%</mat-card-subtitle>
+                    <mat-card-subtitle>Aktualne nawodnienie: {{value -1}}%</mat-card-subtitle>
                     <mat-divider></mat-divider>
                     <mat-progress-bar value="{{value}}"></mat-progress-bar>
                     <br><br>
