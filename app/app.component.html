@@ -12,30 +12,50 @@
 </head>
 
 <body>
-
-    <mat-card>
-        <mat-card-title>Nawadnianie szklarni</mat-card-title>
-        <mat-card-content>
-            <div *ngIf="isMatSubtitleVisible">
-                <mat-card-subtitle>Wymagane nawodnienie dodatkowe: {{defuzzyficatedValue || 0}}</mat-card-subtitle>
-            </div>
-            <mat-card-subtitle>Wilgotność gleby: {{sliderValue}}%</mat-card-subtitle>
-            <mat-slider [disabled]="isStartButtonDisabled" (input)="onInputChange($event)" color="primary" thumbLabel
-                min="1" max="100"></mat-slider>
-            <mat-card-subtitle>Aktualne nawodnienie: {{value}}%</mat-card-subtitle>
-            <mat-divider></mat-divider>
-            <mat-progress-bar value="{{value}}"></mat-progress-bar>
-            <br><br>
-            <mat-card-actions>
-                <button mat-raised-button color="primary" [disabled]="isStartButtonDisabled"
-                    (click)='startTimer()'>Rozpocznij nawadnianie</button>
-                <button mat-raised-button color="accent" (click)='pauseTimer()'>Reset</button>
-            </mat-card-actions>
-            <br>
-        </mat-card-content>
-
-    </mat-card>
+    <mat-tab-group>
+        <mat-tab label="Nawadnianie pomidorów">
+            <mat-card>
+                <mat-card-title>Nawadnianie</mat-card-title>
+                <mat-card-content>
+                    <div *ngIf="isMatSubtitleVisible">
+                        <mat-card-subtitle>Wymagane nawodnienie dodatkowe: {{defuzzyficatedValue || 0}}
+                        </mat-card-subtitle>
+                    </div>
+                    <mat-card-subtitle>Wilgotność gleby: {{sliderValue}}%</mat-card-subtitle>
+                    <mat-slider [disabled]="isStartButtonDisabled" (input)="onInputChange($event)" color="primary"
+                        thumbLabel min="1" max="100"></mat-slider>
+                    <mat-card-subtitle>Aktualne nawodnienie: {{value}}%</mat-card-subtitle>
+                    <mat-divider></mat-divider>
+                    <mat-progress-bar value="{{value}}"></mat-progress-bar>
+                    <br><br>
+                    <mat-card-actions>
+                        <button mat-raised-button color="primary" [disabled]="isStartButtonDisabled"
+                            (click)='startTimer()'>Rozpocznij nawadnianie</button>
+                        <button mat-raised-button color="accent" (click)='pauseTimer()'>Reset</button>
+                    </mat-card-actions>
+                    <br>
+                </mat-card-content>
+            </mat-card>
+        </mat-tab>
+        <mat-tab label="Bibliografia">
+            <mat-card>
+                <mat-card-title>
+                    <a href="http://aslowik.weii.tu.koszalin.pl/wp/studia-stacjonarne-inzynierskie/"
+                        target="_blank">ASLOWIK WEII:
+                        http://aslowik.weii.tu.koszalin.pl/wp/studia-stacjonarne-inzynierskie/</a>
+                </mat-card-title>
+                <mat-card-title>
+                    <a href="https://www.agrofakt.pl/nawadnianie-pomidorow-zrodlo-zdrowia/" target="_blank">AGROFAKT:
+                        https://www.agrofakt.pl/nawadnianie-pomidorow-zrodlo-zdrowia/</a>
+                </mat-card-title>
+                <mat-card-title>
+                    <a href="https://hortinet.pl/wymagania-klimatyczne-i-glebowe-do-uprawy-pomidora-gruntowego/"
+                        target="_blank">HORTINET:
+                        https://hortinet.pl/wymagania-klimatyczne-i-glebowe-do-uprawy-pomidora-gruntowego/</a>
+                </mat-card-title>
+            </mat-card>
+        </mat-tab>
+    </mat-tab-group>
 </body>
 
 </html>
-<!-- https://www.agrofakt.pl/nawadnianie-pomidorow-zrodlo-zdrowia/ -->
