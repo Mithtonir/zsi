@@ -15,6 +15,7 @@ export class AppComponent implements OnInit {
   sliderValue: number; 
   interval: any;
   isStartButtonDisabled = false;
+  isMatSubtitleVisible = false;
   defuzzyficatedValue: number;
   timeLeft: number;
   //#region values for entry soil humidity
@@ -58,6 +59,7 @@ export class AppComponent implements OnInit {
   }
   onInputChange(event: MatSliderChange) {
     this.sliderValue = event.value;
+    this.isMatSubtitleVisible = true;
     this.initHumidityTerms();
     this.rules();
     this.findIrrigationLvl();

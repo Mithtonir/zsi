@@ -11,6 +11,7 @@ var AppComponent = /** @class */ (function () {
     function AppComponent() {
         this.value = 1;
         this.isStartButtonDisabled = false;
+        this.isMatSubtitleVisible = false;
         //#region values for entry soil humidity
         this.humidity = new Array();
         this.humidity2 = new Array();
@@ -42,6 +43,7 @@ var AppComponent = /** @class */ (function () {
     };
     AppComponent.prototype.onInputChange = function (event) {
         this.sliderValue = event.value;
+        this.isMatSubtitleVisible = true;
         this.initHumidityTerms();
         this.rules();
         this.findIrrigationLvl();

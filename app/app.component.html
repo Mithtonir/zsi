@@ -16,11 +16,10 @@
     <mat-card>
         <mat-card-title>Nawadnianie szklarni</mat-card-title>
         <mat-card-content>
-
-            <mat-card-subtitle>Wymagane nawodnienie dodatkowe: {{defuzzyficatedValue || 0}}</mat-card-subtitle>
-    
+            <div *ngIf="isMatSubtitleVisible">
+                <mat-card-subtitle>Wymagane nawodnienie dodatkowe: {{defuzzyficatedValue || 0}}</mat-card-subtitle>
+            </div>
             <mat-card-subtitle>Wilgotność gleby: {{sliderValue}}%</mat-card-subtitle>
-        
             <mat-slider [disabled]="isStartButtonDisabled" (input)="onInputChange($event)" color="primary" thumbLabel
                 min="1" max="100"></mat-slider>
             <mat-card-subtitle>Aktualne nawodnienie: {{value}}%</mat-card-subtitle>
