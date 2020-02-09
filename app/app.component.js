@@ -31,14 +31,14 @@ var AppComponent = /** @class */ (function () {
     };
     AppComponent.prototype.startTimer = function () {
         var _this = this;
+        this.value = this.sliderValue;
         this.isStartButtonDisabled = true;
-        this.timeLeft = this.sliderValue;
         this.interval = setInterval(function () {
             if (_this.timeLeft > 1) {
                 _this.timeLeft--;
                 _this.value++;
             }
-        }, 1000);
+        }, 100);
     };
     AppComponent.prototype.onInputChange = function (event) {
         this.sliderValue = event.value;
@@ -48,23 +48,22 @@ var AppComponent = /** @class */ (function () {
         this.defuzzyfication();
     };
     AppComponent.prototype.pauseTimer = function () {
+        window.location.reload();
+        this.timeLeft = 1;
+        this.sliderValue = 1;
+        this.value = 1;
         this.isStartButtonDisabled = false;
         clearInterval(this.interval);
-        this.test = this.humidity;
-        console.log('this.test', this.test);
     };
     AppComponent.prototype.defuzzyfication = function () {
-        if (this.irrigationHigh === undefined)
-            this.irrigationHigh = 0;
-        if (this.irrigationAvg === undefined)
-            this.irrigationAvg = 0;
-        if (this.irrigationLow === undefined)
-            this.irrigationLow = 0;
-        var sum = this.irrigationAvg + this.irrigationHigh + this.irrigationLow;
-        console.log('sum', sum);
-        this.defuzzyficatedValue = (this.irrigationHigh * this.highX / 3 + this.irrigationAvg * this.avgX / 3 + this.irrigationLow * this.lowX / 3) / (sum);
-        console.log('this.defuzzyficatedValue', this.defuzzyficatedValue);
-        console.log('this.irrigationAvg', this.irrigationAvg);
+        if (this.highX === undefined)
+            this.highX = 0;
+        if (this.avgX === undefined)
+            this.avgX = 0;
+        if (this.lowX === undefined)
+            this.lowX = 0;
+        this.defuzzyficatedValue = ((this.irrigationHigh * this.highX + this.irrigationAvg * this.avgX + this.irrigationLow * this.lowX) / 3) / (this.irrigationAvg + this.irrigationHigh + this.irrigationLow);
+        this.timeLeft = Math.round(this.defuzzyficatedValue);
     };
     AppComponent.prototype.findIrrigationLvl = function () {
         for (var i = 0; i <= 135; i++) {
@@ -81,9 +80,6 @@ var AppComponent = /** @class */ (function () {
                 this.lowX = i;
             }
         }
-        // console.log('this.humidity[this.humidityFzfctd]', this.humidity[this.humidityFzfctd])
-        // console.log('this.humidity2[this.humidityFzfctd2]', this.humidity2[this.humidityFzfctd2])
-        // console.log('this.humidity3[this.humidityFzfctd3]', this.humidity3[this.humidityFzfctd3])
     };
     AppComponent.prototype.rules = function () {
         if (this.humidity[this.humidityFzfctd]) {
@@ -91,7 +87,6 @@ var AppComponent = /** @class */ (function () {
                 this.irrigationHigh = 0;
             else if (this.humidity[this.humidityFzfctd] > 0) {
                 this.irrigationHigh = this.humidity[this.humidityFzfctd];
-                // console.log('this.humidity[this.humidityFzfctd]', this.humidity[this.humidityFzfctd])
             }
         }
         if (this.humidity[this.humidityFzfctd2]) {
@@ -115,10 +110,8 @@ var AppComponent = /** @class */ (function () {
         this.irrogationTermLow();
         this.irrogationTermAvg();
         this.irrogationTermHigh();
-        // console.log('irrigation3', this.irrigation3);
     };
     AppComponent.prototype.irrogationTermLow = function () {
-        //1-45; 30-45
         var a = 45 * 3;
         var x2 = 35 * 3;
         var b = 48 * 3;
@@ -157,7 +150,6 @@ var AppComponent = /** @class */ (function () {
         var a = 60 * 3;
         var x1 = 80 * 3;
         var x2 = 100 * 3;
-        //60- 101; 70-80;
         for (var i = 1; i < 41 * 3; i++) {
             var x = a + i;
             var high;
@@ -173,75 +165,59 @@ var AppComponent = /** @class */ (function () {
     //#endregion
     //#region Humidity
     AppComponent.prototype.initHumidityTerms = function () {
-        this.termHumidityLow();
-        this.termHumidityAvg();
-        this.termHumidityHigh();
+        this.calculateHumidity();
         this.rules();
     };
-    AppComponent.prototype.termHumidityLow = function () {
-        //1-45; 30-45 
-        for (var i = 1; i <= 45; i++) {
+    AppComponent.prototype.calculateHumidity = function () {
+        for (var i = 1; i <= 101; i++) {
             var x = i;
-            var x2 = 30;
-            var b = 45;
+            var x1Low = 1;
+            var x2low = 30;
+            var bLow = 45;
             var low;
-            if (x <= 30 && x >= 1) {
+            if (x1Low <= x && x <= x2low) {
                 low = 1;
             }
             if (x >= 30 && x <= 45) {
-                low = (b - x) / (b - x2);
+                low = (bLow - x) / (bLow - x2low);
             }
             this.humidity.push(low);
             if (this.sliderValue === x) {
                 this.humidityFzfctd = x;
             }
-            if (x === 1) {
-                this.humidityFzfctd = 0;
-            }
-        }
-        // console.log('this.humidity', this.humidity)
-    };
-    AppComponent.prototype.termHumidityAvg = function () {
-        //35 do 75, abv = 1 {40 do 60 }
-        var i = 1;
-        var x1 = 45;
-        var x2 = 60;
-        var a = 35;
-        var b = 75;
-        for (i; i <= 41; i++) {
-            var x = (a - 1) + i;
+            var x1Avg = 45;
+            var x2Avg = 60;
+            var aAvg = 35;
+            var bAvg = 75;
             var avg;
-            if (a <= x && x <= x1) {
-                avg = (x - a) / (x1 - a);
+            if (aAvg <= x && x <= x1Avg) {
+                avg = (x - aAvg) / (x1Avg - aAvg);
             }
-            if (x1 <= x && x <= x2) {
+            if (x1Avg <= x && x <= x2Avg) {
                 avg = 1;
             }
-            if (x2 <= x && x <= b) {
-                avg = (b - x) / (b - x2);
+            if (x2Avg <= x && x <= bAvg) {
+                avg = (bAvg - x) / (bAvg - x2Avg);
             }
-            else if (x < 25 && x > 75) {
+            if (x < 35) {
                 avg = 0;
             }
             this.humidity2.push(avg);
             if (this.sliderValue === x) {
                 this.humidityFzfctd2 = i;
             }
-        }
-    };
-    AppComponent.prototype.termHumidityHigh = function () {
-        var a = 60;
-        var x1 = 80;
-        var x2 = 100;
-        //60- 101; 70-80;
-        for (var i = 1; i < 41; i++) {
-            var x = 59 + i;
+            var aH = 60;
+            var x1H = 80;
+            var x2H = 100;
             var high;
-            if (a <= x && x <= x1) {
-                high = (x - a) / (x1 - a);
+            if (aH <= x && x <= x1H) {
+                high = (x - aH) / (x1H - aH);
             }
-            if (x1 <= x && x <= x2) {
+            if (x1H <= x && x <= x2H) {
                 high = 1;
+            }
+            if (x < 60) {
+                high = 0;
             }
             this.humidity3.push(high);
             if (this.sliderValue === x) {
