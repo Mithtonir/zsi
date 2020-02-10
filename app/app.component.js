@@ -41,7 +41,7 @@ var AppComponent = /** @class */ (function () {
     };
     AppComponent.prototype.openSnackBar = function (message, action) {
         this._snackBar.open(message, action, {
-            duration: 2000,
+            duration: 500,
         });
     };
     AppComponent.prototype.click = function () {
@@ -61,7 +61,21 @@ var AppComponent = /** @class */ (function () {
                 _this.openSnackBar("Rozpoczęto oszuszanie, ponieważ przekroczono wilgotność gleby", "ok");
                 _this.value--;
             }
-        }, 100);
+        }, 10 * this.defuzzyficatedValue - 2 * this.value);
+        this.timer1();
+        this.timer2();
+    };
+    AppComponent.prototype.timer1 = function () {
+        var _this = this;
+        var interval = setInterval(function () {
+            _this.value--;
+        }, 1000);
+    };
+    AppComponent.prototype.timer2 = function () {
+        var _this = this;
+        var interval = setInterval(function () {
+            _this.value++;
+        }, 900);
     };
     AppComponent.prototype.onInputChange = function (event) {
         this.sliderValue = event.value;
@@ -91,7 +105,6 @@ var AppComponent = /** @class */ (function () {
         if (isNaN(this.defuzzyficatedValue)) {
             this.defuzzyficatedValue = 0;
         }
-        console.log('this.defuzzyficatedValue', this.defuzzyficatedValue);
         this.timeLeft = Math.round(this.defuzzyficatedValue);
     };
     AppComponent.prototype.findIrrigationLvl = function () {

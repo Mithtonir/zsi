@@ -54,7 +54,7 @@ export class AppComponent implements OnInit {
   constructor(private _snackBar: MatSnackBar) {}
   openSnackBar(message: string, action: string) {
     this._snackBar.open(message, action, {
-      duration: 2000,
+      duration: 500,
     });
   }
   click() {
@@ -73,10 +73,22 @@ export class AppComponent implements OnInit {
         this.openSnackBar("Rozpoczęto oszuszanie, ponieważ przekroczono wilgotność gleby", "ok");
         this.value--;
       }
-    }, 100)
 
+    }, 10 * this.defuzzyficatedValue - 2 * this.value);
+    this.timer1();
+    this.timer2();
   }
+  timer1() {
 
+    var interval = setInterval(() => {
+      this.value--;
+    }, 1000)
+  }
+  timer2() {
+    var interval = setInterval(() => {
+      this.value++;
+    }, 900)
+  }
   onInputChange(event: MatSliderChange) {
     this.sliderValue = event.value;
     this.isMatSubtitleVisible = true;
@@ -106,7 +118,6 @@ export class AppComponent implements OnInit {
     if (isNaN(this.defuzzyficatedValue)) {
       this.defuzzyficatedValue = 0;
     }
-    console.log('this.defuzzyficatedValue', this.defuzzyficatedValue);
     this.timeLeft = Math.round(this.defuzzyficatedValue);
 
   }
