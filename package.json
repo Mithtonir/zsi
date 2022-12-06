@@ -37,7 +37,7 @@
     "electron-log": "2.2.16",
     "electron-updater": "2.23.3",
     "hammerjs": "2.0.8",
-    "http-server": "0.11.1",
+    "http-server": "0.11.2",
     "rxjs": "6.2.1",
     "rxjs-compat": "6.2.1",
     "rxjs-system-bundle": "6.0.0",
